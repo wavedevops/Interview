@@ -5,3 +5,4 @@
   If anything needs to be deployed urgently, we will deploy through the `hotfix` branch.  
   At the end of the day, we will delete the `feature` or `develop` branch by raising a PR (Pull Request).  
   Once we merge it, we delete the branch.
+*
