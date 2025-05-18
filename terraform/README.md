@@ -1,64 +1,82 @@
 # Terraform Interview Questions
 
 
-## 1. What is Terraform, Why should we use it?
+## What is Terraform, Why should we use it?
 
-Terraform is a popular IaC (Infrastructure as Code) tool. It is widely used due to its advantages over manual infrastructure creation.
+Terraform is a popular IaC (Infrastructure as a Code) tool. It is the best in the market now. It has multiple advantages over manually created infra.
 
-### Key Benefits
+- **Version Control:**  
+Since it is code, we can maintain in Git to version control. We can completely maintain the history of infra and collaboration is easy.
 
+- **Consistent Infra:**  
+Often we face the problem of different configurations in different environments like DEV, QA, PROD, etc. Using terraform we can create similar infra in multiple environments with more reliability.
 
-- **Version Control:** Infrastructure as code can be versioned in Git, enabling history tracking and collaboration.
-- **Consistent Infra:** Ensures consistent configurations across environments (DEV, QA, PROD, etc.).
-- **Automated Infra CRUD:** Enables quick creation, updating, and deletion of infrastructure, reducing human errors.
-- **Inventory Management:** Easily track resources across regions.
-- **Cost Optimisation:** Quickly create or delete infrastructure as needed to save costs.
-- **Automatic Dependency Management:** Terraform understands and manages resource dependencies.
-- **Modular Infra:** Supports code reuse via modules.
+- **Automated Infra CRUD:**  
+Using terraform we can create entire infra in minutes reducing the human errors. Updating infra using terraform is also easy. Using Terraform we can delete infra.
 
----
+- **Inventory Management:**  
+If we create infra manually it is very tough to maintain the inventory of resources in diff regions. But by seeing terraform you can easily tell the resources you are using in different regions.
 
-## 2. Ansible vs Terraform: When to use? What is the purpose?
+- **Cost Optimisation:**  
+When you need infra you can create in minutes. When you don't you can delete in minutes, so you can save the cost.
 
-- **Ansible:** Configuration management tool, best for automating server configurations and tasks inside servers.
-- **Terraform:** Infrastructure provisioning tool, best for creating, updating, and destroying infrastructure.
+- **Automatic dependency management:**  
+terraform can understand the dependency of resources. It can tell us the dependency clearly.
 
-> **Integration:** Terraform can provision servers, then hand over configuration management to Ansible.
-
----
-
-## 3. Explain Terraform Commands
-
-- `terraform init`: Initializes the provider and downloads dependencies.
-- `terraform plan`: Shows the execution plan without making changes.
-- `terraform apply`: Applies the changes to create/update infrastructure.
-- `terraform destroy`: Destroys the managed infrastructure.
-- `terraform fmt`: Formats Terraform files.
-- `terraform taint`: Marks a resource for recreation.
-- `terraform import`: Imports existing resources into Terraform.
-- `terraform -target`: Targets specific resources for apply.
-- `terraform get -update`: Updates modules.
-- `terraform workspace`: Manages workspaces.
+- **Modular Infra:**  
+Code reuse. We can develop our own modules our use open source modules to reuse the infra code. instead of spending more time to create infra from the scratch we can reuse modules.
 
 ---
 
-## 4. What is the state in Terraform?
+## Ansible vs Terraform When to use? What is the purpose?
 
-Terraform uses a state file (`terraform.tfstate`) to track the actual infrastructure and compare it with the desired state defined in `.tf` files.
+Ansible is a popular configuration management tool. We can automate the configuration inside servers through Ansible. We can use Ansible to create configurations in external systems too like github repo creation, ec2 and route53 records. But when it comes to infrastructure, Ansible is very poor in updating and destroying infra. It may create duplicate resources and be very hard to write and destroy playbooks. State management is not available in ansible.
 
----
-
-## 5. What is the remote state in Terraform?
-
-Storing state locally is not recommended. Use a centralized remote state (e.g., S3 with DynamoDB locking) for collaboration and to avoid conflicts.
+So finally ansible is the perfect choice to manage configurations inside servers, terraform is the perfect choice to create infrastructure. We can integrate terraform with ansible. Once terraform creates servers, it can handover configuration management to ansible.
 
 ---
 
-## 6. Explain variables in Terraform
+## Explain terraform commands?
 
-Variables parameterize infrastructure, allowing dynamic values in configurations.
+- `terraform init` - Initialization of the provider.
+- `terraform plan` - Gives the plan of what to create, change, or destroy.
+- `terraform apply` - Applies the plan and creates infra.
+- `terraform destroy` - Destroys the infra.
+- `terraform fmt` - Formats .tf files.
+- `terraform taint` - Marks a resource to be recreated.
+- `terraform import` - Imports existing resource to terraform.
+- `terraform -target` - Targets specific resources.
+- `terraform get -update` - Updates modules.
+- `terraform workspace` - Manages workspaces.
 
-**Types:**
+---
+
+## What is the state in Terraform?
+
+Terraform uses a state file to compare actual infra with declared infra in `.tf` files.  
+**State file = Actual Infrastructure created by terraform**  
+**Desired Infrastructure = Declared through .tf files**
+
+Terraform responsibility is to match desired infrastructure with actual infrastructure.
+
+---
+
+## What is the remote state in Terraform?
+
+Saving state locally is not recommended in terraform. Because in a collaborative environment multiple persons would be working on the same infra, so there is a high possibility of duplications and errors if you save the state locally.
+
+Terraform recommends storing the state in a centralised location, accessible by the entire team and it should be locked so that more people can’t do the changes in infrastructure at a time. Below is the sample code to store the state in S3 and lock it with Dynamo DB.
+
+---
+
+## Explain variables in terraform?
+
+Variables are used to parameterize the infrastructure. We can provide dynamic values to the configuration through variables.
+
+Refer `var.[variable-name]` wherever you want.
+
+Types of variables:
+
 - String
 - Number
 - Bool
@@ -67,209 +85,228 @@ Variables parameterize infrastructure, allowing dynamic values in configurations
 
 ---
 
-## 7. What is TFVARS in Terraform?
+## What is TFVARS in terraform?
 
-TFVARS files provide key-value pairs to supply variable values. They can override defaults and support multiple environments (e.g., `dev.tfvars`, `prod.tfvars`).
+TFVARS is the file which has key, value pairs. It is used to supply the values to terraform variables. If a default value is specified in a variables file TFVARS can override those values.
 
-```sh
+We can use different TFVARS files like `dev.tfvars` and `prod.tfvars` to provision the infrastructure in multiple environments.
+
+Command to apply:
+```bash
 terraform apply -var-file=dev.tfvars
 ```
 
 ---
 
-## 8. What is count and count.index in Terraform?
+## What is count and count index in terraform?
 
-- `count`: Creates multiple instances of a resource.
-- `count.index`: Refers to the index (starting from 0) for each instance.
-
----
-
-## 9. What are outputs in Terraform?
-
-Outputs expose resource attributes after creation, useful for chaining resources or modules.
+`count` is used to create multiple instances of a resource.  
+`count.index` refers to the index from 0, useful for assigning dynamic values.
 
 ---
 
-## 10. What are data sources in Terraform?
+## What are outputs in Terraform?
 
-Data sources query existing resources in the cloud, allowing their attributes to be used in new resources.
-
----
-
-## 11. What are locals in Terraform?
-
-Locals are key-value pairs for intermediate values or expressions. Unlike variables, locals cannot be overridden.
+Outputs return values from terraform resources.  
+They are useful to pass values between modules and reuse created resource attributes.
 
 ---
 
-## 12. What are functions in Terraform?
+## What are data sources in terraform?
 
-Functions perform operations on inputs and return outputs. Common functions:
-
-- `file`
-- `split`
-- `slice`
-- `element`
-- `length`
-- `lookup`
-- `join`
+Data sources allow you to fetch data from existing resources.  
+They help to query cloud provider data and reuse it.
 
 ---
 
-## 13. How to Store Sensitive Data in Terraform?
+## What are Locals in Terraform?
 
-Use Vault, AWS Secrets Manager, or Parameter Store. Avoid hardcoding credentials; use environment variables or CI/CD secrets management.
-
----
-
-## 14. How do you manage credentials in Terraform?
-
-- Use environment variables.
-- Store credentials in CI/CD tools (e.g., Jenkins with `withCredentials`).
-- Assign IAM roles to EC2 instances running Terraform.
+Locals are used to define reusable values with expressions and functions.  
+Unlike variables, locals can't be overridden via tfvars or CLI.
 
 ---
 
-## 15. Explain the concept of a workspace
+## What are functions in terraform and name a few functions you used?
 
-Workspaces allow managing multiple environments (e.g., dev, prod) with the same code. Use `terraform.workspace` to control environment-specific variables.
+Functions help in processing data. Common functions include:
 
----
-
-## 16. How does Terraform manage updates to existing resources?
-
-Terraform compares the state file with the actual infrastructure and applies changes to match the desired state.
-
----
-
-## 17. Example: Create a single EC2 instance on AWS
-
-Practice creating an EC2 instance using separate files (`variables.tf`, `provider.tf`, `main.tf`, etc.) and modules for best practices.
+- `file()`
+- `split()`
+- `slice()`
+- `element()`
+- `length()`
+- `lookup()`
+- `join()`
 
 ---
 
-## 18. How to Store Sensitive Data in Terraform?
+## How to Store Sensitive Data in Terraform?
 
-Use Vault, AWS Secrets Manager, or Parameter Store for secure storage and retrieval of sensitive data.
+Use:
+- Vault
+- AWS Secrets Manager
+- Secure Parameters
+
+Use environment variables for credentials or assign IAM roles to EC2 running terraform.
 
 ---
 
-## 19. Does Terraform support multi-provider deployments?
+## Explain the concept of a workspace?
 
-Yes, define multiple providers in your configuration to manage resources across different platforms.
+Terraform workspace helps manage multiple environments using the same code.  
+Use `terraform.workspace` to manage per-environment logic.
 
 ---
 
-## 20. If I lose the state file in Terraform, how can I recover it?
+## How does Terraform manage updates to existing resources?
 
-- Use remote state with versioning and replication.
-- Restrict access to the state file.
+Terraform compares actual infra (state file) with desired infra.  
+On `plan` or `apply`, it detects drift and suggests corrections.
+
+---
+
+## Give the terraform configuration for creating a single EC2 instance on AWS?
+
+You must practise at least an example to create an ec2 instance by sharing your screen.  
+Use `variables.tf`, `provider.tf`, `main.tf`, `data.tf`, `local.tf`, etc.
+
+---
+
+## How to Store Sensitive Data in Terraform?
+
+Use vault, AWS secrets manager, or SSM Parameter Store.
+
+---
+
+## Does Terraform support multi-provider deployments?
+
+Yes. Define and use multiple providers in your code.
+
+---
+
+## If I lose the state file in terraform how can I recover that?
+
+- Always use remote state with locking.
+- Enable versioning on S3.
+- Replicate state files across regions.
+- Secure S3 bucket with IAM.
 - Enable MFA delete.
-- Restore from backups if lost.
+- Use monitoring & alerting.
+- Restore backup manually if needed.
 
 ---
 
-## 21. What is a null resource in Terraform?
+## Null resource in terraform?
 
-A resource that doesn't create infrastructure but can use provisioners (e.g., `local-exec`, `remote-exec`, `file`).
-
----
-
-## 22. What are modules in Terraform?
-
-Modules enable code reuse, centralization, and consistency across projects and environments.
+Used with provisioners when no actual resource is needed.  
+Used for `local-exec`, `remote-exec`, `file`, and `triggers`.
 
 ---
 
-## 23. Is there a tool that can look for security vulnerabilities in your Terraform code?
+## What are modules in terraform?
 
-Yes, tools like `tflint` (for linting and validation) and others can be integrated into CI/CD pipelines.
+Modules help reuse code. Benefits:
 
----
-
-## 24. Difference between Ansible & Terraform
-
-- **Terraform:** IaC tool for provisioning infrastructure.
-- **Ansible:** Configuration management tool for server setup.
-- **Integration:** Use Terraform for infra, Ansible for configuration.
+- Centralised code
+- Enforce best practices
+- Easy maintenance
+- Control and consistency
 
 ---
 
-## 25. Terraform vs CloudFormation
+## Is there a tool that can look for security vulnerabilities in your terraform code?
 
-- **Terraform:** Multi-cloud, state management, extensible providers.
-- **CloudFormation:** AWS-only, manages via stacks, less extensible.
+Yes. Examples:
 
----
-
-## 26. What happens if you manually change resources created by Terraform?
-
-Terraform will detect changes during refresh and attempt to revert manual changes to match the declared state.
+- tflint (used locally)
+- argos (considering for CI/CD)
 
 ---
 
-## 27. How do you deploy your infra code in different environments?
+## What is the difference between Ansible & Terraform?
 
-- Use workspaces.
-- Use different TFVARS files.
-- Maintain separate codebases if needed, but reuse modules.
+- **Terraform**: IaC tool for infra creation (has state).
+- **Ansible**: Configuration tool (no state).
+- Use both together: Terraform creates, Ansible configures.
 
 ---
 
-## 28. What are provisioners in Terraform?
+## Terraform vs Cloudformation?
 
-Provisioners execute scripts or commands after resource creation.
+- **Terraform**: Multi-cloud, state-based.
+- **CloudFormation**: AWS only, stack-based (no state file).
+- Terraform supports custom and external providers.
 
-- **local-exec:** Runs locally.
-- **remote-exec:** Runs on the remote resource via SSH.
-- **file:** Copies files to remote resources.
+---
 
-**Example:**
+## I faced one question.. once you created ec2 using terraform, after that you added one tag manually what will terraform do…
 
+- Terraform refreshes the state.
+- Detects manual change.
+- Removes manual tag to match declared infra on next apply.
+
+---
+
+## How do you deploy your infra code in different environments?
+
+- Use `terraform workspaces`
+- Use different `.tfvars` files
+- Use same modules, different variable values per env
+
+---
+
+## What are provisioners in terraform
+
+Used to execute scripts after resource creation.
+
+### local-exec
+
+Runs locally:
 ```hcl
-resource "aws_instance" "example" {
-    ami           = "ami-12345678"
-    instance_type = "t2.micro"
+provisioner "local-exec" {
+  command = "echo Instance Created: ${self.public_ip} >> instances.txt"
+}
+```
 
-    provisioner "local-exec" {
-        command = "echo Instance Created: ${self.public_ip} >> instances.txt"
-    }
+### remote-exec
 
-    connection {
-        type        = "ssh"
-        user        = "ec2-user"
-        private_key = file("~/.ssh/id_rsa")
-        host        = self.public_ip
-    }
+Runs on remote server:
+```hcl
+connection {
+  type        = "ssh"
+  user        = "ec2-user"
+  private_key = file("~/.ssh/id_rsa")
+  host        = self.public_ip
+}
+provisioner "remote-exec" {
+  inline = [
+    "sudo yum update -y",
+    "sudo yum install -y nginx",
+    "sudo systemctl start nginx"
+  ]
+}
+```
 
-    provisioner "remote-exec" {
-        inline = [
-            "sudo yum update -y",
-            "sudo yum install -y nginx",
-            "sudo systemctl start nginx"
-        ]
-    }
+### file
 
-    provisioner "file" {
-        source      = "app.conf"
-        destination = "/etc/nginx/nginx.conf"
-    }
+Copy files:
+```hcl
+provisioner "file" {
+  source      = "app.conf"
+  destination = "/etc/nginx/nginx.conf"
 }
 ```
 
 ---
 
-## 29. Terraform apply fails due to a state file lock issue. How would you resolve it?
+## A Terraform apply fails due to a state file lock issue. How would you resolve it?
 
-- Use `terraform force-unlock LOCK_ID` to release the lock.
-- Manually delete the lock entry in DynamoDB if using remote state locking.
-
----
-
-## 30. Some resources are not deleted when destroying infrastructure. What went wrong?
-
-- Resource dependencies (e.g., security groups attached to EC2).
-- Insufficient permissions to delete resources.
-- Ensure dependencies are removed before deleting parent resources.
+- Use `terraform force-unlock <LOCK_ID>`
+- Or manually delete lock entry from DynamoDB
 
 ---
+
+## Your Terraform deployment created resources in AWS, but some are not being deleted when destroying the infrastructure. What went wrong?
+
+- Resource dependency (e.g., EC2 → SG)
+- IAM permissions might prevent deletion
